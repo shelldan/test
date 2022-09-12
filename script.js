@@ -2,20 +2,19 @@
 
 //Spoonacular API documentation: https://spoonacular.com/food-api/docs
 //Spoonacular Authentication: https://spoonacular.com/food-api/docs#Authentication
+var page2Div = document.createElement('div')
+var page3Div = document.createElement('div')
+var page4Div = document.createElement('div')
+
 var page1Div = document.querySelector('.page-1')
-var page2Div = document.querySelector('.page-2')
-var page3Div = document.querySelector('.page-3')
-var page4Div = document.querySelector('.page-4')
-
-
 
 var cuisineBtn = document.getElementById('cuisine')
 var mainDiv = document.querySelector('main')
 
 var frenchStyle = document.getElementById('french')
-var spoonApiKey = 'bff7143ee08c4a6aa8d53b4a91fc839f'
+var spoonApiKey = '0a580c74f6de4c57b52b33cce0d2d1e6'
 
-var id
+var id = [] //might need to use array to remove duplicate id
 var recipeInfoUrl = 'https://api.spoonacular.com/recipes/' + id +'/information'
 
 
@@ -24,7 +23,6 @@ function page2handler (event){
 
     page1Div.style.display = 'none'
 
-    var page2Div = document.createElement('div')
     page2Div.setAttribute('class','page-2')
 
     var french = document.createElement('button')
@@ -43,10 +41,10 @@ function page2handler (event){
     german.textContent = 'German'
     italian.textContent = 'Italian'
 
-    console.log(event.target.textContent)
+    console.log(event.target.textContent) //cuisine
 
-    return page3handler;
-
+    $("button").click(page3handler) //stackoverflow: how to get ID of button user just clicked? 
+    //$("button").click(getRecipeName)
 }
 
 
@@ -54,81 +52,75 @@ function page3handler(event){
 
     page2Div.style.display = 'none';
 
-    var page3Div = document.createElement('div')
     page3Div.setAttribute('class','page-3')
 
-    var cuisineImg = document.createElement('img')
-    var cuisineHeader = document.createElement('h2')
 
-    mainDiv.appendChild(page3Div)
-    page3Div.appendChild(cuisineImg)
-    page3Div.appendChild(cuisineHeader)
+    console.log(event.target.textContent) // French 
 
-    console.log(event.target.textContent)
+    //cuisineHeader.textContent = 'Bake Ratatouille' //for testing, will delete later 
 
-    cuisineHeader.textContent = 'Bake Ratatouille'
+    var cuisine = event.target.textContent
+    
+    var cuisineUrl = 'https://api.spoonacular.com/recipes/complexSearch?' +'&cuisine=' + cuisine + '&apiKey=' + spoonApiKey
+    
+    console.log(cuisineUrl)
 
+    function getRecipeName(){
+        fetch(cuisineUrl)
+        .then(function(response){
+            return response.json()
+        })
+        .then(function(recipeName){
+            console.log(recipeName)
+            
+
+            for (var i=0; i<10; i++){ //limited to 10 per page, butwhy can't use i<recipeName.length? 
+                var cuisineHeader = document.createElement('h2')
+                var cuisineImg = document.createElement('img')
+                var cuisineRecipe = document.createElement('p') // not sure if we want to add here
+
+                cuisineHeader.textContent = recipeName.results[i].title
+                cuisineImg.src=recipeName.results[i].image
+                cuisineHeader.setAttribute('id',recipeName.results[i].id)
+
+                
+                mainDiv.appendChild(page3Div)
+                page3Div.appendChild(cuisineHeader)
+                page3Div.appendChild(cuisineImg)
+                page3Div.appendChild(cuisineRecipe)
+
+                
+               $('h2').click(function(){
+                console.log($(this).attr('id')) //return the id 
+                var id = ($(this).attr('id'))
+                console.log(id)
+                localStorage.setItem('id',id) 
+
+                var recipeInfoUrl = 'https://api.spoonacular.com/recipes/' + id +'/information?' + '&apiKey=' + spoonApiKey
+                
+                fetch(recipeInfoUrl)
+                .then(function(response){
+                    return response.json()
+                })
+                .then(function(recipeInfo){
+                    console.log(recipeInfo.summary)
+                    cuisineRecipe.innerHTML=recipeInfo.summary
+
+
+                })
+               })
+            }
+        })
+    }
+    getRecipeName()
 }
 
 
 
-// function page4handler(){
-    
-//     var page4Div = document.createElement('div')
-//     page4Div.setAttribute('class','page-4')
 
-
-// }
 
 cuisineBtn.addEventListener('click',page2handler)
 
-
-
-
-
-// function getRecipeName(event){
-//     event.preventDefault()
-//     console.log(event.target.textContent) // could comment it out later, just for testing 
-
-//     //TODO: probably need to update the button info under Style 
-//     var cuisine = event.target.textContent//list of cuisines: https://spoonacular.com/food-api/docs#Cuisines (e.g. American, Chinese, French,German,Indian)
-//     var cuisineUrl = 'https://api.spoonacular.com/recipes/complexSearch?' +'&cuisine=' + cuisine + '&apiKey=' + spoonApiKey
-
-
-//     fetch(cuisineUrl)
-//         .then(function(response){
-//             return response.json()
-//         })
-//         .then(function(data){
-//             console.log(data) //need to return data.id or data.title  
-//         })
-// }
-
-
-// function getRecipeInfo(){
-//     //event.preventDefault()
-//     //console.log(event.target.textContent)
-
-//     //var id = getRecipeName() //how to connect to the getReceiptName function? 
-//     var id = '633754'
-//     var receiptInfoUrl = 'https://api.spoonacular.com/recipes/' + id +'/information?' + '&apiKey=' + spoonApiKey //how to make the url working? 
-
-//     fetch(receiptInfoUrl)
-//         .then(function(response){
-//             return response.json()
-//         })
-//         .then(function(data){
-//             console.log(data)
-//         })
-
-// }
-
-// getRecipeInfo()
-
-
-
-
-// frenchStyle.addEventListener('click',getRecipeName)
 
 
 
