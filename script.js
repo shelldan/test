@@ -12,10 +12,10 @@ var cuisineBtn = document.getElementById('cuisine')
 var mainDiv = document.querySelector('main')
 
 var frenchStyle = document.getElementById('french')
-var spoonApiKey = '0a580c74f6de4c57b52b33cce0d2d1e6'
+var spoonApiKey = '3270bea369734f39aede023713a006dd'
 
-var id = [] //might need to use array to remove duplicate id
-var recipeInfoUrl = 'https://api.spoonacular.com/recipes/' + id +'/information'
+var ids = [] //might need to use array to remove duplicate id
+//var recipeInfoUrl = 'https://api.spoonacular.com/recipes/' + id +'/information'
 
 
 
@@ -94,20 +94,11 @@ function page3handler(event){
                 console.log($(this).attr('id')) //return the id 
                 var id = ($(this).attr('id'))
                 console.log(id)
-                localStorage.setItem('id',id) 
+                localStorage.setItem('id',id)
 
-                var recipeInfoUrl = 'https://api.spoonacular.com/recipes/' + id +'/information?' + '&apiKey=' + spoonApiKey
+                page4handler()
                 
-                fetch(recipeInfoUrl)
-                .then(function(response){
-                    return response.json()
-                })
-                .then(function(recipeInfo){
-                    console.log(recipeInfo.summary)
-                    cuisineRecipe.innerHTML=recipeInfo.summary
 
-
-                })
                })
             }
         })
@@ -116,7 +107,37 @@ function page3handler(event){
 }
 
 
+function page4handler(){
+    page2Div.style.display= 'none';
+    page3Div.style.display= 'none';
 
+    page4Div.setAttribute('class','page-4')
+
+    var cuisineHeader = document.createElement('h2')
+    var cuisineImg = document.createElement('img')
+    var cuisineRecipe = document.createElement('p')
+
+    mainDiv.appendChild(page4Div)
+    page4Div.appendChild(cuisineHeader)
+    page4Div.appendChild(cuisineImg)
+    page4Div.appendChild(cuisineRecipe)
+
+    var id = localStorage.getItem('id')
+
+    var recipeInfoUrl = 'https://api.spoonacular.com/recipes/' + id +'/information?' + '&apiKey=' + spoonApiKey
+
+    fetch(recipeInfoUrl)
+    .then(function(response){
+        return response.json()
+    })
+    .then(function(recipeInfo){
+        console.log(recipeInfo)
+        cuisineHeader.textContent = recipeInfo.title
+        cuisineImg.src=recipeInfo.image
+        cuisineRecipe.innerHTML=recipeInfo.summary
+    })
+
+}
 
 
 cuisineBtn.addEventListener('click',page2handler)
