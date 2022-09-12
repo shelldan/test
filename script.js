@@ -12,7 +12,7 @@ var cuisineBtn = document.getElementById('cuisine')
 var mainDiv = document.querySelector('main')
 
 var frenchStyle = document.getElementById('french')
-var spoonApiKey = '3270bea369734f39aede023713a006dd'
+var spoonApiKey = 'c95dcc6d89ab47a384f18b2f989d7286'
 
 var ids = [] //might need to use array to remove duplicate id
 //var recipeInfoUrl = 'https://api.spoonacular.com/recipes/' + id +'/information'
@@ -83,24 +83,23 @@ function page3handler(event){
                 cuisineImg.src=recipeName.results[i].image
                 cuisineHeader.setAttribute('id',recipeName.results[i].id)
 
-                
+                cuisineHeader.addEventListener('click',function(){
+                    console.log(this)
+                    var id = this.getAttribute('id')
+                    console.log(id)
+                    page4handler()
+                })
+
                 mainDiv.appendChild(page3Div)
                 page3Div.appendChild(cuisineHeader)
                 page3Div.appendChild(cuisineImg)
                 page3Div.appendChild(cuisineRecipe)
 
-                
-               $('h2').click(function(){
-                console.log($(this).attr('id')) //return the id 
-                var id = ($(this).attr('id'))
-                console.log(id)
-                localStorage.setItem('id',id)
-
-                page4handler()
-                
-
-               })
             }
+
+           // cuisineHeader.addEventListener('click',page4handler)
+            
+            
         })
     }
     getRecipeName()
@@ -131,7 +130,7 @@ function page4handler(){
         return response.json()
     })
     .then(function(recipeInfo){
-        console.log(recipeInfo)
+        //console.log(recipeInfo)
         cuisineHeader.textContent = recipeInfo.title
         cuisineImg.src=recipeInfo.image
         cuisineRecipe.innerHTML=recipeInfo.summary
